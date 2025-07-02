@@ -1,7 +1,8 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Param } from '@nestjs/common';
 import { BookAppService } from './book-app.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { bookPatterns } from '@app/contracts';
+import { BookAddDto } from '@app/contracts/books/book.add.dto';
 
 @Controller()
 export class BookAppController {
@@ -11,21 +12,22 @@ export class BookAppController {
   getHello() {
     return this.bookAppService.getHello();
   }
-  @MessagePattern(bookPatterns.bookGetBooks)
+  @MessagePattern(bookPatterns.bookGetAll)
   getBooks() {
     return this.bookAppService.getBooks();
   }
 
   @MessagePattern(bookPatterns.bookCreateBook)
-  createBook(@Payload() book: any) {
+  createBook(@Payload() book: BookAddDto) {
+    console.log('Received book data:', book);
     return this.bookAppService.createBook(book);
   }
   @MessagePattern(bookPatterns.bookUpdateBook)
-  updateBook(book: any) {
-    return this.bookAppService.updateBook(book);
+  updateBook(@Payload() book: BookAddDto, @Param('id') id: string) {
+    return this.bookAppService.updateBook(id, book);
   }
   @MessagePattern(bookPatterns.bookDeleteBook)
-  deleteBook(id: string) {
+  deleteBook(@Payload() id: string) {
     return this.bookAppService.deleteBook(id);
   }
 }

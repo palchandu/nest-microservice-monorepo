@@ -1,29 +1,40 @@
+import { BookAddDto } from '@app/contracts/books/book.add.dto';
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Book, BookDocument } from './schema/book.schema';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class BookAppService {
+  constructor(
+    @InjectModel(Book.name) private readonly bookModel: Model<BookDocument>,
+  ) {}
   getHello() {
     return 'Hello World! from book service and book-app!';
   }
 
   // createBook
-  createBook(book: any) {
-    return `Book created! ID: ${book}`;
+  async createBook(book: BookAddDto) {
+    const newBook = new this.bookModel(book);
+    const saveRes = await newBook.save();
+    return saveRes;
   }
   // getBook
-  getBook(id: string) {
-    return `Book details! ID: ${id}`;
+  async getBook(id: string) {
+    return await this.bookModel.findById(id).exec();
   }
   // getBooks
-  getBooks() {
-    return 'List of books!';
+  async getBooks() {
+    return await this.bookModel.find().exec();
   }
   // updateBook
-  updateBook(book: any) {
-    return `Book updated! ID: ${book}`;
+  async updateBook(id: string, book: BookAddDto) {
+    return await this.bookModel
+      .findByIdAndUpdate(id, book, { new: true })
+      .exec();
   }
   // deleteBook
-  deleteBook(id: string) {
-    return `Book deleted! ID: ${id}`;
+  async deleteBook(id: string) {
+    return await this.bookModel.findByIdAndDelete(id).exec();
   }
 }

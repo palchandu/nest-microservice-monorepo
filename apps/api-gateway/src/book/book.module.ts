@@ -11,8 +11,8 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
         name: 'BOOK_SERVICE',
         transport: Transport.TCP,
         options: {
-          host: 'localhost',
-          port: 6380, // Ensure this port matches the Book service's port
+          host: process.env.BOOK_APP_HOST ?? 'localhost', // Ensure this matches the Book service's host
+          port: Number(process.env.BOOK_APP_PORT) || 6380, // Ensure this port matches the Book service's port
         },
       },
     ]),

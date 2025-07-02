@@ -7,11 +7,12 @@ async function bootstrap() {
     {
       transport: Transport.TCP,
       options: {
-        host: 'localhost',
-        port: 6380,
+        host: process.env.BOOK_APP_HOST ?? 'localhost',
+        port: Number(process.env.BOOK_APP_PORT) || 6380,
       },
     },
   );
+  // connect mongodb
   await app.listen();
 }
 void bootstrap();
